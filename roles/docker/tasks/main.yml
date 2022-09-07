@@ -1,0 +1,60 @@
+---
+# Installing and configuring docker
+- name: Adding Docker repository
+  yum_repository:
+    name: Docker
+    description: Docker Repo
+    baseurl: https://download.docker.com/linux/centos/7/x86_64/stable
+    gpgcheck: no
+  tags: 
+    - docker 
+
+- name: Installing Docker package
+  package:
+    name:  "docker-ce-20.10.9-3.el7.x86_64"
+    state: present
+- name: Starting docker service
+  service:
+    name: "docker"
+    state: started
+    enabled: yes
+  tags: 
+    - docker 
+
+- name: Add "sja" user to "docker" group
+  
+  remote_user: root
+  user:
+    name: "sja"
+    group: "docker"
+    append: yes
+  tags:
+    - docker
+
+- name: Install docker-compose from official github repo
+  remote_user: root
+  get_url:
+    url : https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 'u+x,g+x'
+  tags: 
+    - docker 
+
+- name: "Copy  file to the root path"
+  become: true
+  copy:
+    src: /home/sja/projects/spire-dashboard\ Docker
+    dest: /
+  tags: 
+    - docker
+
+- name: "Build and start container"
+  remote_user: root
+  become: true
+  shell: |
+    cd /spire-dashboard\ Docker
+    chmod 777 docker-compose.yml
+    docker-compose up -d --build
+  tags: 
+    - docker
+

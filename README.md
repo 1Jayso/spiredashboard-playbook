@@ -1,0 +1,1 @@
+This is an  ansible play book that adds a user to a server, install docker and dcoker-compose and finally runs a docker-compose file to start it services

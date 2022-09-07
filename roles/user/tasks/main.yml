@@ -1,0 +1,5 @@
+---
+- name: Add User to the server
+  host: all
+  vars_prompt:
+    - name: user
